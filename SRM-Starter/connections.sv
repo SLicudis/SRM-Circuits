@@ -71,12 +71,6 @@ wire [1:0] low_fn1 = fn1[1:0];
 
 
 always_comb begin
-    case(reg_in_sel)            //Reg in sel
-    2'b00: reg_din = alu_res;
-    2'b01: reg_din = inst_bus[21:0] << 10;
-    2'b10: reg_din = adjusted_din;
-    2'b11: reg_din = adjusted_din;
-    endcase
     case(pc_in_sel)             //PC in sel
     3'b000: pc_din = pc + {{5{inst_bus[26]}}, inst_bus[26:0]};
     3'b001: pc_din = pc + {{19{inst_bus[26]}}, inst_bus[26:22], inst_bus[7:0]};
@@ -124,6 +118,12 @@ always_comb begin
     2'b01: adjusted_din = {16'b0, word_in};
     2'b10: adjusted_din = din;
     default: adjusted_din = 0;
+    endcase
+    case(reg_in_sel)            //Reg in sel
+    2'b00: reg_din = alu_res;
+    2'b01: reg_din = inst_bus[21:0] << 10;
+    2'b10: reg_din = adjusted_din;
+    2'b11: reg_din = adjusted_din;
     endcase
     case(addr_byte_sel)         //Adjust data out with bytes
     2'b00: byte_adj_out = {reg_bout[7:0], din[23:0]};
