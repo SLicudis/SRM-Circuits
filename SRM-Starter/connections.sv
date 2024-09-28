@@ -28,13 +28,7 @@ module connections(
     output logic [31:0] pc_din,
     output logic [31:0] d_addr,
     output logic [31:0] dout,
-    //
-    output [1:0] fn_1_low,
-    output [7:0] byteadj_out
 );
-assign fn_1_low = reg_in_sel;
-assign byteadj_out = adjusted_din;
-
 assign reg_c_we = control_lines[0];
 assign jmp = control_lines[2];
 assign sr_we = control_lines[3];
