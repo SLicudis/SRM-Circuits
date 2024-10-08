@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<circuit>
+  <version>2</version>
+  <attributes/>
+  <visualElements>
+    <visualElement>
+      <elementName>SRM_Basic1.dig</elementName>
+      <elementAttributes/>
+      <pos x="720" y="420"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes/>
+      <pos x="700" y="420"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>InDefault</string>
+          <value v="1" z="false"/>
+        </entry>
+      </elementAttributes>
+      <pos x="700" y="460"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Clock</elementName>
+      <elementAttributes>
+        <entry>
+          <string>runRealTime</string>
+          <boolean>true</boolean>
+        </entry>
+        <entry>
+          <string>Frequency</string>
+          <int>1000</int>
+        </entry>
+      </elementAttributes>
+      <pos x="700" y="500"/>
+    </visualElement>
+    <visualElement>
+      <elementName>ROM</elementName>
+      <elementAttributes>
+        <entry>
+          <string>bigEndian</string>
+          <boolean>true</boolean>
+        </entry>
+        <entry>
+          <string>AddrBits</string>
+          <int>21</int>
+        </entry>
+        <entry>
+          <string>isProgramMemory</string>
+          <boolean>true</boolean>
+        </entry>
+        <entry>
+          <string>Bits</string>
+          <int>32</int>
+        </entry>
+        <entry>
+          <string>lastDataFile</string>
+          <file>C:\Users\santi\OneDrive\Escritorio\Assemblers\out.bin</file>
+        </entry>
+        <entry>
+          <string>intFormat</string>
+          <intFormat>bin</intFormat>
+        </entry>
+        <entry>
+          <string>autoReload</string>
+          <boolean>true</boolean>
+        </entry>
+      </elementAttributes>
+      <pos x="1280" y="440"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Const</elementName>
+      <elementAttributes/>
+      <pos x="1260" y="480"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Telnet</elementName>
+      <elementAttributes/>
+      <pos x="1240" y="600"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Tunnel</elementName>
+      <elementAttributes>
+        <entry>
+          <string>NetName</string>
+          <string>telnet_int</string>
+        </entry>
+      </elementAttributes>
+      <pos x="1340" y="620"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Tunnel</elementName>
+      <elementAttributes>
+        <entry>
+          <string>rotation</string>
+          <rotation rotation="2"/>
+        </entry>
+        <entry>
+          <string>NetName</string>
+          <string>telnet_int</string>
+        </entry>
+      </elementAttributes>
+      <pos x="640" y="440"/>
+    </visualElement>
+    <visualElement>
+      <elementName>PullDown</elementName>
+      <elementAttributes>
+        <entry>
+          <string>rotation</string>
+          <rotation rotation="1"/>
+        </entry>
+        <entry>
+          <string>Bits</string>
+          <int>8</int>
+        </entry>
+      </elementAttributes>
+      <pos x="1340" y="580"/>
+    </visualElement>
+    <visualElement>
+      <elementName>External</elementName>
+      <elementAttributes>
+        <entry>
+          <string>applicationType</string>
+          <appType>IVERILOG</appType>
+        </entry>
+        <entry>
+          <string>Label</string>
+          <string>periferals</string>
+        </entry>
+        <entry>
+          <string>externalInputs</string>
+          <string>clk,req,din:32,addr:22,we,rom_in:32,tty_in:8</string>
+        </entry>
+        <entry>
+          <string>Code</string>
+          <string>module periferals(
+    input clk,
+    input req,
+    input [31:0] din,
+    input [21:0] addr,
+    input we,
+    input [31:0] rom_in,
+    input [7:0] tty_in,
+    output reg [31:0] dout,
+    output [20:0] rom_addr,
+    output [7:0] tty_out,
+    output tty_str,
+    output tty_rd
+);
+
+initial dout = 0;
+
+assign rom_addr = addr[20:0];
+reg [31:0] memory [4194303:0];
+
+always_ff @(posedge clk) begin
+    if(we) begin
+        if((addr &gt;= 22&apos;b1000000000000000000000) &amp;&amp; (addr &lt;= 22&apos;b1111111111111111111110)) memory[addr] &lt;= din;
+    end
+end
+
+always_ff @(posedge clk) begin
+    if((addr &gt;= 22&apos;b0) &amp;&amp; (addr &lt;= 22&apos;h1fffff)) dout &lt;= rom_in;
+    else if(addr == 22&apos;h3fffff) dout &lt;= {24&apos;h0, tty_in};
+    else dout &lt;= memory[addr];
+end
+
+assign tty_out = din[31:24];
+assign tty_str = (addr == 22&apos;b1111111111111111111111) &amp;&amp; we;
+assign tty_rd = (addr == 22&apos;b1111111111111111111111) &amp;&amp; req;
+
+endmodule</string>
+        </entry>
+        <entry>
+          <string>iverilogOptions</string>
+          <string>-g2012</string>
+        </entry>
+        <entry>
+          <string>externalOutputs</string>
+          <string>dout:32,rom_addr:21,tty_out:8,tty_str,tty_rd</string>
+        </entry>
+        <entry>
+          <string>Width</string>
+          <int>8</int>
+        </entry>
+      </elementAttributes>
+      <pos x="1000" y="420"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>intFormat</string>
+          <intFormat>bin</intFormat>
+        </entry>
+      </elementAttributes>
+      <pos x="940" y="660"/>
+    </visualElement>
+  </visualElements>
+  <wires>
+    <wire>
+      <p1 x="660" y="480"/>
+      <p2 x="720" y="480"/>
+    </wire>
+    <wire>
+      <p1 x="1260" y="480"/>
+      <p2 x="1280" y="480"/>
+    </wire>
+    <wire>
+      <p1 x="840" y="480"/>
+      <p2 x="900" y="480"/>
+    </wire>
+    <wire>
+      <p1 x="1160" y="480"/>
+      <p2 x="1200" y="480"/>
+    </wire>
+    <wire>
+      <p1 x="940" y="480"/>
+      <p2 x="1000" y="480"/>
+    </wire>
+    <wire>
+      <p1 x="1200" y="640"/>
+      <p2 x="1240" y="640"/>
+    </wire>
+    <wire>
+      <p1 x="700" y="420"/>
+      <p2 x="720" y="420"/>
+    </wire>
+    <wire>
+      <p1 x="1160" y="420"/>
+      <p2 x="1200" y="420"/>
+    </wire>
+    <wire>
+      <p1 x="980" y="420"/>
+      <p2 x="1000" y="420"/>
+    </wire>
+    <wire>
+      <p1 x="840" y="420"/>
+      <p2 x="960" y="420"/>
+    </wire>
+    <wire>
+      <p1 x="960" y="580"/>
+      <p2 x="1320" y="580"/>
+    </wire>
+    <wire>
+      <p1 x="1320" y="580"/>
+      <p2 x="1340" y="580"/>
+    </wire>
+    <wire>
+      <p1 x="980" y="520"/>
+      <p2 x="1000" y="520"/>
+    </wire>
+    <wire>
+      <p1 x="840" y="520"/>
+      <p2 x="880" y="520"/>
+    </wire>
+    <wire>
+      <p1 x="1300" y="620"/>
+      <p2 x="1340" y="620"/>
+    </wire>
+    <wire>
+      <p1 x="900" y="620"/>
+      <p2 x="1240" y="620"/>
+    </wire>
+    <wire>
+      <p1 x="700" y="460"/>
+      <p2 x="720" y="460"/>
+    </wire>
+    <wire>
+      <p1 x="1340" y="460"/>
+      <p2 x="1360" y="460"/>
+    </wire>
+    <wire>
+      <p1 x="1160" y="460"/>
+      <p2 x="1220" y="460"/>
+    </wire>
+    <wire>
+      <p1 x="960" y="460"/>
+      <p2 x="1000" y="460"/>
+    </wire>
+    <wire>
+      <p1 x="840" y="460"/>
+      <p2 x="940" y="460"/>
+    </wire>
+    <wire>
+      <p1 x="980" y="560"/>
+      <p2 x="1360" y="560"/>
+    </wire>
+    <wire>
+      <p1 x="900" y="400"/>
+      <p2 x="980" y="400"/>
+    </wire>
+    <wire>
+      <p1 x="840" y="500"/>
+      <p2 x="1000" y="500"/>
+    </wire>
+    <wire>
+      <p1 x="700" y="500"/>
+      <p2 x="720" y="500"/>
+    </wire>
+    <wire>
+      <p1 x="1160" y="500"/>
+      <p2 x="1180" y="500"/>
+    </wire>
+    <wire>
+      <p1 x="1180" y="660"/>
+      <p2 x="1240" y="660"/>
+    </wire>
+    <wire>
+      <p1 x="880" y="660"/>
+      <p2 x="940" y="660"/>
+    </wire>
+    <wire>
+      <p1 x="1220" y="600"/>
+      <p2 x="1240" y="600"/>
+    </wire>
+    <wire>
+      <p1 x="1300" y="600"/>
+      <p2 x="1320" y="600"/>
+    </wire>
+    <wire>
+      <p1 x="1160" y="440"/>
+      <p2 x="1280" y="440"/>
+    </wire>
+    <wire>
+      <p1 x="640" y="440"/>
+      <p2 x="720" y="440"/>
+    </wire>
+    <wire>
+      <p1 x="840" y="440"/>
+      <p2 x="1000" y="440"/>
+    </wire>
+    <wire>
+      <p1 x="660" y="380"/>
+      <p2 x="1200" y="380"/>
+    </wire>
+    <wire>
+      <p1 x="960" y="540"/>
+      <p2 x="1000" y="540"/>
+    </wire>
+    <wire>
+      <p1 x="1200" y="380"/>
+      <p2 x="1200" y="420"/>
+    </wire>
+    <wire>
+      <p1 x="1200" y="480"/>
+      <p2 x="1200" y="640"/>
+    </wire>
+    <wire>
+      <p1 x="1360" y="460"/>
+      <p2 x="1360" y="560"/>
+    </wire>
+    <wire>
+      <p1 x="960" y="540"/>
+      <p2 x="960" y="580"/>
+    </wire>
+    <wire>
+      <p1 x="960" y="420"/>
+      <p2 x="960" y="460"/>
+    </wire>
+    <wire>
+      <p1 x="880" y="520"/>
+      <p2 x="880" y="660"/>
+    </wire>
+    <wire>
+      <p1 x="980" y="400"/>
+      <p2 x="980" y="420"/>
+    </wire>
+    <wire>
+      <p1 x="980" y="520"/>
+      <p2 x="980" y="560"/>
+    </wire>
+    <wire>
+      <p1 x="900" y="400"/>
+      <p2 x="900" y="480"/>
+    </wire>
+    <wire>
+      <p1 x="900" y="480"/>
+      <p2 x="900" y="620"/>
+    </wire>
+    <wire>
+      <p1 x="1220" y="460"/>
+      <p2 x="1220" y="600"/>
+    </wire>
+    <wire>
+      <p1 x="660" y="380"/>
+      <p2 x="660" y="480"/>
+    </wire>
+    <wire>
+      <p1 x="1320" y="580"/>
+      <p2 x="1320" y="600"/>
+    </wire>
+    <wire>
+      <p1 x="1180" y="500"/>
+      <p2 x="1180" y="660"/>
+    </wire>
+    <wire>
+      <p1 x="940" y="460"/>
+      <p2 x="940" y="480"/>
+    </wire>
+  </wires>
+  <measurementOrdering/>
+</circuit>
