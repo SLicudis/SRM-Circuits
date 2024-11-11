@@ -85,7 +85,7 @@ endmodule : video</string>
         </entry>
         <entry>
           <string>lastDataFile</string>
-          <file>C:\Users\santi\OneDrive\Escritorio\Assemblers\out.bin</file>
+          <file>out.bin</file>
         </entry>
         <entry>
           <string>autoReload</string>
