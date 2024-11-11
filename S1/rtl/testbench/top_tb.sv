@@ -20,27 +20,54 @@ module top_tb(
     );
 
     tb_inst_mem imem(
-        .clk(clk), .rom_addr(inst_addr[4:0]), .inst_out(inst_in)
+        .clk(clk), .rom_addr(inst_addr[9:0]), .inst_out(inst_in)
+    );
+
+    tb_dmem dmem(
+        .address(data_addr[9:0]), .din(data_out), .dout(data_in), .clk(clk), .req(mem_req), .we(mem_we), .mask(mask)
     );
 
 endmodule : top_tb
 
 module tb_inst_mem(
     input clk,
-    input [4:0] rom_addr,
+    input [9:0] rom_addr,
     output [31:0] inst_out
 );
     reg [31:0] buffer = 0;
-    always_ff @(posedge clk) buffer <= current_data;
-    logic [31:0] current_data;
+    reg [31:0] memory [1023:0];
+    always_ff @(posedge clk) buffer <= memory[rom_addr];
     assign inst_out = buffer;
-    always_comb begin
-        case(rom_addr)
-        5'h0: current_data = 32'b000001_11111_00000_0000_000000000010;
-        5'h1: current_data = 32'b000001_11111_11111_0000_000000000001;
-        5'h2: current_data = 32'h141ffffc;
-        default: current_data = 0;
-        endcase
+
+    integer file;
+    initial begin
+        $readmemh("/mnt/e/Pogramacion/SystemVerilog/SRM/S1/rtl/rom_start.hex", memory);
     end
 
 endmodule : tb_inst_mem
+
+module tb_dmem(
+    input [9:0] address,
+    input [31:0] din,
+    input [3:0] mask,
+    input we, req, clk,
+    output [31:0] dout
+);
+    reg [7:0] byte0 [1023:0];
+    reg [7:0] byte1 [1023:0];
+    reg [7:0] byte2 [1023:0];
+    reg [7:0] byte3 [1023:0];
+    reg [31:0] out_reg = 0;
+    wire [31:0] debug = {byte3[1], byte2[1], byte1[1], byte0[1]};
+    always_ff @(posedge clk) begin : Write
+        if(we) begin
+            if(mask[0]) byte0[address] <= din[7:0];
+            if(mask[1]) byte1[address] <= din[15:8];
+            if(mask[2]) byte2[address] <= din[23:16];
+            if(mask[3]) byte3[address] <= din[31:24];
+        end
+    end
+    assign dout = out_reg;
+    always_ff @(posedge clk) if(req) out_reg <= {byte3[address], byte2[address], byte1[address], byte0[address]};
+
+endmodule : tb_dmem

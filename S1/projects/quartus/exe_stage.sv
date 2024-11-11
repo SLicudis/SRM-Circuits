@@ -48,7 +48,7 @@ module exe_stage(
         1'b1: immediate = {{20{inst_buffer[25]}}, inst_buffer[25:21], inst_buffer[6:0]}; //SSI
         endcase
     end
-
+    
     logic [31:0] alu_b;
     always_comb begin : AluBsel //ALU_BSEL: RS2, IMM
         case(control_word[0])

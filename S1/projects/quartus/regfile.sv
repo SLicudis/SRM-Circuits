@@ -10,5 +10,3 @@ module regfile(
     assign rs1 = (rs1_addr != 0) ? ((we && (rd_addr == rs1_addr)) ? din : memory[rs1_addr]) : 32'h0;
     assign rs2 = (rs2_addr != 0) ? ((we && (rd_addr == rs2_addr)) ? din : memory[rs2_addr]) : 32'h0;
 endmodule : regfile
-
-

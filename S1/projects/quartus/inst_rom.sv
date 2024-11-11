@@ -15,16 +15,3 @@ module inst_rom(
         endcase
     end
 endmodule : inst_rom
-
-/*
-0. ALU_BSEL: REG, IMM
-1. IMM_SEL: DSI, SSI
-2. ALU_MODSEL: FN4, 0
-3. JMP
-4. BRH
-5-6. IP_SEL: SSI, DI, DSI
-7. MEM_WE
-8. MEM_REQ
-9. REG_WE
-10-11. REG_INSEL: ALU, UPPER_IMM, MEM, IP+4
-*/
